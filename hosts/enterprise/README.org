@@ -126,6 +126,7 @@ nixos-install --no-root-passwd
 After booting, clone the git repo locally to run setup script.
 
 #+begin_src sh :tangle no
+sudo bash
 nix-shell -p git --run "git clone https://github.com/cthachuk/dotfiles"
 bash dotfiles/hosts/enterprise/setup.sh
 #+end_src
