@@ -62,6 +62,8 @@ cat << EOF > /mnt/etc/nixos/configuration.nix
     wget
   ];
 
+  # set an empty root password for now
+  users.users.root.initialHashedPassword = "";
   system.stateVersion = "20.09"; 
 }
 EOF

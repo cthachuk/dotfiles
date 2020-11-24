@@ -3,21 +3,22 @@
 #+PROPERTY: header-args :tangle setup.sh
 
 * Overview
-
 * Specs
 
 VMWare virtual machine:
 
-| CPU   | 2 x vCPU, 2 threads per vCPU  |
-| RAM   | 16GiB                         |
-| HDD   | 64GiB                         |
+| CPU | 8     |
+| RAM | 16GiB |
+| HDD | 64GiB |
 
-* Configure Virtual Machine (QEMU)
+* Create new virtual machine (QEMU)
 - Use =virt manager=
-- Create VM with specs above, using QEMU
-- Ensure UEFI is selected during customization
+- Create new VM with specs above, using QEMU
+- Use nixos 20.09 minimal iso newer than November 1, 2020 (https://releases.nixos.org/?prefix=nixos/20.09-small/)
+- Click ~Customize configuration before install~
+- Use =i440FX= chipset and =UEFI= firmware
 
-* Installation (exports to setup.sh)
+* Installation script (exports to setup.sh)
 
 Using flakes seems to complicate installation. The simplest solution at the
 moment is to install a minimal nixos with nix unstable that supports flakes.
@@ -110,6 +111,8 @@ cat << EOF > /mnt/etc/nixos/configuration.nix
     wget
   ];
 
+  # set an empty root password for now
+  users.users.root.initialHashedPassword = "";
   system.stateVersion = "20.09"; 
 }
 EOF
@@ -117,4 +120,16 @@ EOF
 *** install
 #+begin_src sh
 nixos-install --no-root-passwd 
+#+end_src
+* Download and run installation script
+
+After booting, clone the git repo locally to run setup script.
+
+#+begin_src sh :tangle no
+nix-shell -p git --run "git clone https://github.com/cthachuk/dotfiles"
+bash dotfiles/hosts/enterprise/setup.sh
+#+end_src
+* Reboot
+#+begin_src sh :tangle no
+reboot
 #+end_src
