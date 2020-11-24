@@ -1,0 +1,120 @@
+#+TITLE: Enterprise
+#+DATE:  November 24, 2020
+#+PROPERTY: header-args :tangle setup.sh
+
+* Overview
+
+* Specs
+
+VMWare virtual machine:
+
+| CPU   | 2 x vCPU, 2 threads per vCPU  |
+| RAM   | 16GiB                         |
+| HDD   | 64GiB                         |
+
+* Configure Virtual Machine (QEMU)
+- Use =virt manager=
+- Create VM with specs above, using QEMU
+- Ensure UEFI is selected during customization
+
+* Installation (exports to setup.sh)
+
+Using flakes seems to complicate installation. The simplest solution at the
+moment is to install a minimal nixos with nix unstable that supports flakes.
+Then, proceed with the usual configuration of this host.
+
+** File preamble
+#+begin_src sh
+#! /usr/bin/env bash
+#+end_src
+
+** Set up root file system
+#+BEGIN_SRC sh
+parted /dev/sda -- mklabel gpt
+parted /dev/sda -- mkpart ESP fat32 1MiB 512MiB
+parted /dev/sda -- mkpart primary 512MiB 100%
+parted /dev/sda -- set 1 boot on
+mkfs.fat -F32 -n BOOT /dev/sda1
+mkfs.ext4 -L nixos /dev/sda2
+#+END_SRC
+
+** Mount drives
+#+BEGIN_SRC sh
+mount /dev/sda2 /mnt
+
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
+#+END_SRC
+
+** Install minimal nixos configuration that supports flakes
+
+To simplify things, we'll actually write our own basic config files for now.
+
+*** generate basic config
+In case this does more than generate config files (which we do next), include this step:
+#+begin_src sh
+nixos-generate-config --root /mnt
+#+end_src
+
+*** hardware-configuration.nix
+#+begin_src sh
+cat << EOF > /mnt/etc/nixos/hardware-configuration.nix
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
+
+  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "ehci_pci" "sd_mod" "sr_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-label/nixos";
+      fsType = "ext4";
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-label/BOOT";
+      fsType = "vfat";
+    };
+
+  swapDevices = [ ]; 
+}
+EOF
+#+end_src
+
+*** configuration.nix
+
+#+begin_src sh
+cat << EOF > /mnt/etc/nixos/configuration.nix
+{ config, pkgs, ... }:
+
+{
+  imports = [ ./hardware-configuration.nix ];
+
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  nix.package = pkgs.nixUnstable;
+  nix.extraOptions = ''
+    experimental-features = nix-command flakes
+  '';
+
+  networking.hostName = "enterprise";
+  time.timeZone = "Americas/Los_Angeles";
+
+  environment.systemPackages = with pkgs; [
+    git
+    vim
+    wget
+  ];
+
+  system.stateVersion = "20.09"; 
+}
+EOF
+#+end_src
+*** install
+#+begin_src sh
+nixos-install --no-root-passwd 
+#+end_src
