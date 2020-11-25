@@ -1,13 +1,13 @@
 [user]
-	name = Henrik Lissner
-	email = henrik@lissner.net
-	signingkey = 5F6C0EA160557395
+	name = Chris Thachuk
+	email = chris@thachuk.com
+	signingkey = 3FB60DA9BECDF59C
 [commit]
 	gpgsign = true
 [core]
 	whitespace = trailing-space
 [github]
-	user = hlissner
+	user = cthachuk
 [rebase]
 	autosquash = true
 [push]
@@ -31,7 +31,7 @@
 	clean = git-lfs clean -- %f
 [url "https://github.com/"]
     insteadOf = gh:
-[url "git@github.com:hlissner/"]
+[url "git@github.com:cthachuk/"]
     insteadOf = gh:/
 [url "https://gitlab.com/"]
     insteadOf = gl:

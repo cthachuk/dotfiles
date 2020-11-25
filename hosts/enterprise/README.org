@@ -1,6 +1,6 @@
 #+TITLE: Enterprise
 #+DATE:  November 24, 2020
-#+PROPERTY: header-args :tangle setup.sh
+#+PROPERTY: header-args :tangle bootstrap.sh
 
 * Overview
 * Specs
@@ -18,7 +18,7 @@ VMWare virtual machine:
 - Click ~Customize configuration before install~
 - Use =i440FX= chipset and =UEFI= firmware
 
-* Installation script (exports to setup.sh)
+* Bootstrap script (exports to bootstrap.sh)
 
 Using flakes seems to complicate installation. The simplest solution at the
 moment is to install a minimal nixos with nix unstable that supports flakes.
@@ -63,12 +63,7 @@ cat << EOF > /mnt/etc/nixos/hardware-configuration.nix
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports = [ (modulesPath + "/profiles/qemu-guest.nix") ];
-
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "ehci_pci" "sd_mod" "sr_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
+  imports = [ ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-label/nixos";
@@ -121,7 +116,7 @@ EOF
 #+begin_src sh
 nixos-install --no-root-passwd 
 #+end_src
-* Download and run installation script
+* Download and run bootstrap script for base nixos-20.09 that supports flakes
 
 After booting, clone the git repo locally to run setup script.
 
@@ -133,4 +128,9 @@ bash dotfiles/hosts/enterprise/setup.sh
 * Reboot
 #+begin_src sh :tangle no
 reboot
+#+end_src
+* Download dotfiles repo and bootstrap
+#+begin_src sh :tangle no
+nix-shell -p git --run "git clone https://github.com/cthachuk/dotfiles"
+nixos-rebuild switch --flake dotfiles#enterprise
 #+end_src

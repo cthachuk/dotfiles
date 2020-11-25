@@ -10,7 +10,7 @@
     desktop = {
       bspwm.enable = true;
       apps = {
-        discord.enable = true;
+        # discord.enable = true;
         rofi.enable = true;
         # godot.enable = true;
       };
@@ -19,24 +19,24 @@
         firefox.enable = true;
       };
       gaming = {
-        steam.enable = true;
+        # steam.enable = true;
         # emulators.enable = true;
         # emulators.psx.enable = true;
       };
       media = {
-        daw.enable = true;
-        documents.enable = true;
-        graphics.enable = true;
-        mpv.enable = true;
-        recording.enable = true;
-        spotify.enable = true;
+        # daw.enable = true;
+        # documents.enable = true;
+        # graphics.enable = true;
+        # mpv.enable = true;
+        # recording.enable = true;
+        # spotify.enable = true;
       };
       term = {
         default = "xst";
         st.enable = true;
       };
       vm = {
-        qemu.enable = true;
+        # qemu.enable = true;
       };
     };
     editors = {
@@ -45,15 +45,15 @@
       vim.enable = true;
     };
     hardware = {
-      audio.enable = true;
-      ergodox.enable = true;
+      # audio.enable = true;
+      # ergodox.enable = true;
       fs = {
-        enable = true;
-        zfs.enable = true;
-        ssd.enable = true;
+        enable = false;
+        zfs.enable = false;
+        ssd.enable = false;
       };
-      nvidia.enable = true;
-      sensors.enable = true;
+      nvidia.enable = false;
+      sensors.enable = false;
     };
     shell = {
       direnv.enable = true;

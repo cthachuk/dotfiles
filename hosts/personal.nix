@@ -3,6 +3,7 @@
 with lib;
 {
   networking.hosts =
+    # TODO: update for LAN
     let hostConfig = {
           "192.168.1.2"  = [ "ao" ];
           "192.168.1.3"  = [ "aka" ];
@@ -14,15 +15,12 @@ with lib;
         hostName = config.networking.hostName;
     in mkIf (builtins.elem hostName hosts) hostConfig;
 
-  ## Location config -- since Toronto is my 127.0.0.1
-  time.timeZone = mkDefault "America/Toronto";
+  ## Location config -- since Seattle is my 127.0.0.1
+  time.timeZone = mkDefault "America/Los_Angeles";
   i18n.defaultLocale = mkDefault "en_US.UTF-8";
   # For redshift, mainly
-  location = (if config.time.timeZone == "America/Toronto" then {
-    latitude = 43.70011;
-    longitude = -79.4163;
-  } else if config.time.timeZone == "Europe/Copenhagen" then {
-    latitude = 55.88;
-    longitude = 12.5;
+  location = (if config.time.timeZone == "America/Los_Angeles" then {
+    latitude = 47.6062;
+    longitude = 122.3321;
   } else {});
 }
