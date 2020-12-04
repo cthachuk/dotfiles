@@ -69,7 +69,17 @@ swapon /dev/vg0/swap
 Installing directly from a flake, as of December 4, 2020, does not work out of the box.  In this step, after partitions have been created, we install a minimal nixos system that can later be configured with the flake for this host.
 
 #+begin_src sh
-wget -O /mnt/etc/nixos/configuration.nix https://github.com/cthachuk/dotfiles/hosts/enterprise/pre-configuration.nix 
+nixos-generate-config --root /mnt
+#+end_src
+
+We want to use a configuration file that allows us to install from a flake, so grab it from the repo.
+#+begin_src sh
+cd /var/tmp
+git clone https://github.com/cthachuk/dotfiles
+cp /var/tmp/dotfiles/hosts/enterprise/pre-configuration.nix /mnt/etc/nixos/configuratin.nix
+#+end_src
+
+#+begin_src sh
 nixos-install --no-root-passwd 
 #+end_src
 
