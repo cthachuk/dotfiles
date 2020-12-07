@@ -22,7 +22,7 @@
 
   #CPU
   nix.maxJobs = lib.mkDefault 8;
-  powerManagement.cpuFreqGovenor = "powersave";
+  powerManagement.cpuFreqGovernor = "powersave";
   hardware.cpu.intel.updateMicrocode = true;
    
   # high-resolution display

@@ -48,9 +48,8 @@ mount_partitions_for_install() {
 }
 
 install_nixos_from_flake() {
-    local my_hostname="enterprise"
     nix-shell -p nixUnstable
-    nix build /mnt/etc/nixos#nixosConfigurations.${my_hostname}.config.system.build.toplevel --experimental-features "flakes nix-command" --store "/mnt" --impure
+    nix build /mnt/etc/nixos#nixosConfigurations.enterprise.config.system.build.toplevel --experimental-features "flakes nix-command" --store "/mnt" --impure
     # then install the build system...
     nixos-install --root /mnt --system ./result 
 }
@@ -63,6 +62,7 @@ then
     && setup_boot_partition \
     && setup_lvm_partitions \
     && mount_partitions_for_install \
-    && echo && echo "System has been bootstrapped and is ready for install." && echo ) \
+    && install_nixos_from_flake \
+    && echo && echo "System has been bootstrapped." && echo ) \
     || ( echo && echo "Error bootstrapping system." && echo )
 fi
