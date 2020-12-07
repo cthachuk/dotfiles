@@ -26,7 +26,7 @@
   hardware.cpu.intel.updateMicrocode = true;
    
   # high-resolution display
-  hardware.video.hidpi.enable = lib.mkDefault "true";
+  hardware.video.hidpi.enable = true;
 
   fileSystems."/" =
     { device = "/dev/disk/by-label/nixos";
