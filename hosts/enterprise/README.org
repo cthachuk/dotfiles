@@ -22,7 +22,7 @@ sudo bash
 cd /var/tmp
 nix-shell -p git
 git clone https://github.com/cthachuk/dotfiles /mnt/etc/nixos
-bash /var/tmp/dotfiles/hosts/enterprise/bootstrap.sh
+bash /mnt/etc/nixos/hosts/enterprise/bootstrap.sh
 reboot
 
 #+end_src
