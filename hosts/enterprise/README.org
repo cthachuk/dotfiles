@@ -21,8 +21,8 @@ Dell XPS 13" 9300 Developer Edition (2020)
 sudo bash
 cd /var/tmp
 nix-shell -p git
-git clone https://github.com/cthachuk/dotfiles /mnt/etc/nixos
-bash /mnt/etc/nixos/hosts/enterprise/bootstrap.sh
+git clone https://github.com/cthachuk/dotfiles
+bash /var/tmp/dotfiles/hosts/enterprise/bootstrap.sh
 reboot
 
 #+end_src

@@ -29,17 +29,17 @@ setup_lvm_partitions() {
     pvcreate /dev/mapper/cryptlvm
     vgcreate vg0 /dev/mapper/cryptlvm
     lvcreate -L 32G vg0 -n swap
-    lvcreate -L 256G vg0 -n root
+    lvcreate -L 256G vg0 -n nixos
     lvcreate -l 100%FREE vg0 -n home
     
-    mkfs.ext4 -L root /dev/vg0/root
+    mkfs.ext4 -L nixos /dev/vg0/nixos
     mkfs.ext4 -L home /dev/vg0/home
     mkswap -L swap /dev/vg0/swap
 }
 
 mount_partitions_for_install() {
     # Mount partitions ahead of NixOS install
-    mount /dev/vg0/root /mnt
+    mount /dev/vg0/nixos /mnt
     mkdir /mnt/home
     mount /dev/vg0/home /mnt/home
     mkdir /mnt/boot
@@ -49,7 +49,7 @@ mount_partitions_for_install() {
 
 install_nixos_from_flake() {
     nix-shell -p nixUnstable
-    nix build /mnt/etc/nixos#nixosConfigurations.enterprise.config.system.build.toplevel --experimental-features "flakes nix-command" --store "/mnt" --impure
+    nix build /var/tmp/dotfiles#nixosConfigurations.enterprise.config.system.build.toplevel --experimental-features "flakes nix-command" --store "/mnt" --impure
     # then install the build system...
     nixos-install --root /mnt --system ./result 
 }
