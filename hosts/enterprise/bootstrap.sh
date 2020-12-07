@@ -25,6 +25,12 @@ setup_lvm_partitions() {
     echo
     cryptsetup luksFormat /dev/nvme0n1p2
     cryptsetup open /dev/nvme0n1p2 cryptlvm
+
+    pvcreate /dev/mapper/cryptlvm
+    vgcreate vg0 /dev/mapper/cryptlvm
+    lvcreate -L 32G vg0 -n swap
+    lvcreate -L 256G vg0 -n root
+    lvcreate -l 100%FREE vg0 -n home
     
     mkfs.ext4 -L root /dev/vg0/root
     mkfs.ext4 -L home /dev/vg0/home
