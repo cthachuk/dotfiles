@@ -49,7 +49,7 @@ install_nixos_from_flake() {
     nixos-install --root /mnt --system ./result 
 }
 
-read -p "Proceeding will erase your disk(s).  Type YES (uppercase) if you are sure: " -n 1 -r
+read -p "Proceeding will erase your disk(s).  Type YES (uppercase) if you are sure: " 
 echo
 if [[ $REPLY =~ "YES" ]]
 then
