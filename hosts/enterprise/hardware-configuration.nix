@@ -28,9 +28,6 @@
   # high-resolution display
   hardware.video.hidpi.enable = lib.mkDefault "true";
 
-  # host id
-  networking.hostId = "enterprise";
-  
   fileSystems."/" =
     { device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
