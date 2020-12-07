@@ -13,93 +13,16 @@ Dell XPS 13" 9300 Developer Edition (2020)
 | RAM | 32GB 3733MHz LPDDR4x Memory Onboard                                         |
 | HDD | 1TB M.2 PCIe NVMe Solid State Drive                                         |
 
-* Install a minimal nixos that can configure itself from a flake
-Installing directly from a flake, as of December 4, 2020, does not work out of the box.  In this step, after partitions have been created, we install a minimal nixos system that can later be configured with the flake for this host.
+* Installation
 
-We want to use a configuration file that allows us to install from a flake, so grab it from the repo, bootstrap system, and reboot.
 #+begin_src sh
-cd /var/tmp
-nix-shell -p git
-git clone https://github.com/cthachuk/dotfiles
-sudo bash /var/tmp/dotfiles/hosts/enterprise/bootstrap.sh
-reboot
-#+end_src
 
-* Install flake for this host
-#+begin_src sh
+# simplify process by switching to root user
 sudo bash
 cd /var/tmp
-git clone https://github.com/cthachuk/dotfiles
-#+end_src
-
-(Important) Ensure the ~hardware-configuration.nix~ is up-to-date in dotfiles repo.  Add =/etc/nixos/hardware-configuration.nix= to repository if not present.
-
-#+begin_src sh
-nixos-rebuild switch --flake ./dotfiles#enterprise
-#+end_src
-
-#+begin_src sh
+nix-shell -p git
+git clone https://github.com/cthachuk/dotfiles /mnt/etc/nixos
+bash /var/tmp/dotfiles/hosts/enterprise/bootstrap.sh
 reboot
+
 #+end_src
-* Bootstrap script
-:PROPERTIES:
-:header-args: :tangle bootstrap.sh
-:END:
-
-These steps should be tangled into the file =bootstrap.sh= that will be run in the next step to prepare the machine, prior to system initialization.
-
-** Setup partitions
-
-We split the main disk into two partitions: one for EFI and the other for LVM on LUKS.
-
-#+begin_src sh
-parted -s /dev/nvme0n1 -- mklabel gpt
-parted -s /dev/nvme0n1 -- mkpart ESP fat32 1MiB 512MiB
-parted -s /dev/nvme0n1 -- mkpart primary 512MiB 100%
-#+end_src
-
-Prepare the boot partition:
-
-#+begin_src sh
-parted -s /dev/nvme0n1 -- set 1 boot on
-mkfs.fat -F32 -n BOOT /dev/nvme0n1p1
-#+end_src
-
-Prepare the LUKS encrypted partition (interactive step to choose password):
-
-#+begin_src sh
-echo "Choose a strong password to encrypt main partition"
-echo "=================================================="
-cryptsetup luksFormat /dev/nvme0n1p2
-cryptsetup open /dev/nvme0n1p2 cryptlvm
-#+end_src
-
-Prepare the LVM partitions:
-
-#+begin_src 
-pvcreate /dev/mapper/cryptlvm
-vgcreate vg0 /dev/mapper/cryptlvm
-lvcreate -L 32G vg0 -n swap
-lvcreate -L 256G vg0 -n root
-lvcreate -l 100%FREE vg0 -n home
-#+end_src
-
-Format the partitions:
-
-#+begin_src sh
-mkfs.ext4 -L root /dev/vg0/root
-mkfs.ext4 -L home /dev/vg0/home
-mkswap -L swap /dev/vg0/swap
-#+end_src
-
-Mount the file systems:
-
-#+begin_src sh
-mount /dev/vg0/root /mnt
-mkdir /mnt/home
-mount /dev/vg0/home /mnt/home
-mkdir /mnt/boot
-mount /dev/nvme0n1p1 /mnt/boot
-swapon /dev/vg0/swap
-#+end_src
-** Install from flake
