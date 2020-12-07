@@ -10,9 +10,9 @@ echo "=================================================="
 cryptsetup luksFormat /dev/nvme0n1p2
 cryptsetup open /dev/nvme0n1p2 cryptlvm
 
-mkfs.ext4 /dev/vg0/root
-mkfs.ext4 /dev/vg0/home
-mkswap /dev/vg0/swap
+mkfs.ext4 -L root /dev/vg0/root
+mkfs.ext4 -L home /dev/vg0/home
+mkswap -L swap /dev/vg0/swap
 
 mount /dev/vg0/root /mnt
 mkdir /mnt/home
@@ -20,30 +20,3 @@ mount /dev/vg0/home /mnt/home
 mkdir /mnt/boot
 mount /dev/nvme0n1p1 /mnt/boot
 swapon /dev/vg0/swap
-
-nixos-generate-config --root /mnt
-
-cat << EOF > /mnt/etc/nixos/pre-configuration.nix
-{ config, pkgs, ... }:
-
-{
-  nix.package = pkgs.nixUnstable;
-  nix.extraOptions = ''
-    experimental-features = nix-command flakes
-  '';
-
-  environment.systemPackages = with pkgs; [
-    git
-    vim
-    wget
-  ];
-
-  # set an empty root password for now
-  users.users.root.initialHashedPassword = "";
-}
-EOF
-
-# N.B. This only works if imports statement is on a single line.
-sed -i "/.*imports.*/  imports = [ ./hardware-configuration.nix ./pre-configuration.nix ];/" /mnt/etc/nixos/configuration.nix
-
-nixos-install --no-root-passwd
