@@ -48,7 +48,7 @@ mount_partitions_for_install() {
 }
 
 install_nixos_from_flake() {
-    nix-shell -p nixUnstable
+    # requires nixUnstable currently
     nix build /var/tmp/dotfiles#nixosConfigurations.enterprise.config.system.build.toplevel --experimental-features "flakes nix-command" --store "/mnt" --impure
     # then install the build system...
     nixos-install --root /mnt --system ./result 

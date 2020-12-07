@@ -20,9 +20,8 @@ Dell XPS 13" 9300 Developer Edition (2020)
 # simplify process by switching to root user
 sudo bash
 cd /var/tmp
-nix-shell -p git
+nix-shell -p git nixUnstable
 git clone https://github.com/cthachuk/dotfiles
 bash /var/tmp/dotfiles/hosts/enterprise/bootstrap.sh
 reboot
-
 #+end_src
