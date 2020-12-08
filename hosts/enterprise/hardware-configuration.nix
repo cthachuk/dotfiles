@@ -26,8 +26,16 @@
 
   #CPU
   nix.maxJobs = lib.mkDefault 8;
-  powerManagement.cpuFreqGovernor = "powersave";
+  powerManagement.cpuFreqGovernor = "powersave"; # TODO: should this be "ondemand"?
   hardware.cpu.intel.updateMicrocode = true;
+
+  # Power management
+  environment.systemPackages = [ pkgs.acpi ];
+  powerManagement.powertop.enable = true;
+
+  # Monitor backlight control
+  programs.light.enable = true;
+  user.extraGroups = [ "video" ]; # TODO: determine if this is necessary
    
   # high-resolution display
   hardware.video.hidpi.enable = true;

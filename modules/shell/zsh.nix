@@ -36,14 +36,26 @@ in {
     };
 
     user.packages = with pkgs; [
-      zsh
-      nix-zsh-completions
       bat
+      bottom
+      dua
       exa
       fasd
       fd
       fzf
+      jq
+      killall
+      navi
+      nix-zsh-completions
+      procs
+      (ripgrep.override {withPCRE2 = true;})
+      skim
+      starship
+      tealdeer
+      tokei
+      zoxide
       tldr
+      zsh
     ];
 
     env = {

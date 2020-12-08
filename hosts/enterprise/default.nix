@@ -8,11 +8,14 @@
   ## Modules
   modules = {
     desktop = {
-      bspwm.enable = true;
+      bspwm.enable = false;
+      plasma.enable = true;
       apps = {
         # discord.enable = true;
         rofi.enable = true;
-        # godot.enable = true;
+        # slack.enable = true;
+        # teams.enable = true;
+        zoom.enable = true;
       };
       browsers = {
         default = "firefox";
@@ -25,15 +28,18 @@
       };
       media = {
         # daw.enable = true;
-        # documents.enable = true;
-        # graphics.enable = true;
+        documents = {
+          enable = true;
+          pdf.enable = true;
+        };
+        graphics.enable = true;
         # mpv.enable = true;
         # recording.enable = true;
-        # spotify.enable = true;
+        spotify.enable = true;
       };
       term = {
-        default = "xst";
-        st.enable = true;
+        default = "alacritty";
+        alacritty.enable = true;
       };
       vm = {
         # qemu.enable = true;
@@ -44,16 +50,23 @@
       emacs.enable = true;
       vim.enable = true;
     };
+    dev = {
+      cc.enable = true;
+      rust.enable = true;
+      shell.enable = true;
+      nix.enable = true;
+    };
     hardware = {
-      # audio.enable = true;
+      audio.enable = true;
+      bluetooth.enable = true;
       # ergodox.enable = true;
       fs = {
         enable = false;
-        zfs.enable = false;
-        ssd.enable = false;
+        # zfs.enable = false;
+        ssd.enable = true;
       };
-      nvidia.enable = false;
-      sensors.enable = false;
+      # nvidia.enable = false;
+      sensors.enable = true;
     };
     shell = {
       direnv.enable = true;
@@ -65,6 +78,7 @@
     };
     services = {
       ssh.enable = true;
+      syncthing.enable = true;
       # Needed occasionally to help the parental units with PC problems
       # teamviewer.enable = true;
     };

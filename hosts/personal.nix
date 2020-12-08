@@ -5,11 +5,8 @@ with lib;
   networking.hosts =
     # TODO: update for LAN
     let hostConfig = {
-          "192.168.1.2"  = [ "ao" ];
-          "192.168.1.3"  = [ "aka" ];
-          "192.168.1.10" = [ "kuro" ];
-          "192.168.1.11" = [ "shiro" ];
-          "192.168.1.12" = [ "midori" ];
+          "192.168.1.2"  = [ "nasa" ];
+          "192.168.1.4"  = [ "tuvok" ];
         };
         hosts = flatten (attrValues hostConfig);
         hostName = config.networking.hostName;
