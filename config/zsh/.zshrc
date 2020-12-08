@@ -1,5 +1,8 @@
 [ -d "$ZGEN_DIR" ] || git clone https://github.com/tarjoilija/zgen "$ZGEN_DIR"
-source $ZGEN_SOURCE
+# BUG: $ZGEN_SOURCE is overwritten somehow; hardcode for now.
+# See: https://github.com/hlissner/dotfiles/issues/10
+# source $ZGEN_SOURCE
+source "$ZGEN_DIR/zgen.zsh"
 if ! zgen saved; then
   echo "Initializing zgen"
   zgen load hlissner/zsh-autopair autopair.zsh
