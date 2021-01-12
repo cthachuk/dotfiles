@@ -20,4 +20,7 @@ with lib;
     latitude = 47.6062;
     longitude = 122.3321;
   } else {});
+
+  ##
+  modules.shell.bitwarden.config.server = "p.v0.io";
 }
