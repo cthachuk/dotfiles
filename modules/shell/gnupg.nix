@@ -11,19 +11,17 @@ in {
     };
   };
 
-  config = mkIf cfg.enable {
-    environment.variables.GNUPGHOME = "$XDG_CONFIG_HOME/gnupg";
-
-    programs.gnupg.agent.enable = true;
-
-    user.packages = [ pkgs.tomb ];
-
-    home.configFile = {
-      "gnupg/gpg-agent.conf".source = "${configDir}/gnupg/gpg-agent.conf";
-      "gnupg/gpg.conf".source = "${configDir}/gnupg/gpg.conf";
-    };
-
-    init.yubikey = mkIf cfg.yubikey.enable {
+  config = mkIf cfg.enable (mkMerge [
+    ({
+      environment.variables.GNUPGHOME = "$XDG_CONFIG_HOME/gnupg";
+      programs.gnupg.agent.enable = true;
+      user.packages = [ pkgs.tomb ];
+      home.configFile = {
+        "gnupg/gpg-agent.conf".source = "${configDir}/gnupg/gpg-agent.conf";
+        "gnupg/gpg.conf".source = "${configDir}/gnupg/gpg.conf";
+      };
+    })
+    (mkIf cfg.yubikey.enable {
       programs.ssh.startAgent = false;
       programs.gnupg.agent = {
         enable = true;
@@ -43,6 +41,6 @@ in {
         #export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
         export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
       '';
-    };
-  };
+    })
+  ]);
 }
