@@ -13,7 +13,7 @@ in {
       syncthing = {
         enable = true;
         user = "cthachuk";
-        dataDir = "/home/cthachuk/Sync"; # TODO: is this necessary?
+        # dataDir = "/home/cthachuk/Sync"; # TODO: is this necessary?
       };
     };
   };
