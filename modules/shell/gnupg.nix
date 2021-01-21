@@ -6,7 +6,9 @@ let cfg = config.modules.shell.gnupg;
 in {
   options.modules.shell.gnupg = with types; {
     enable   = mkBoolOpt false;
-    cacheTTL = mkOpt int 3600;  # 1hr
+    yubikey = {
+      enable  = mkBoolOpt false;
+    };
   };
 
   config = mkIf cfg.enable {
@@ -16,13 +18,30 @@ in {
 
     user.packages = [ pkgs.tomb ];
 
-    # HACK Without this config file you get "No pinentry program" on 20.03.
-    #      programs.gnupg.agent.pinentryFlavor doesn't appear to work, and this
-    #      is cleaner than overriding the systemd unit.
-    home.configFile."gnupg/gpg-agent.conf" = {
-      text = ''
-        default-cache-ttl ${toString cfg.cacheTTL}
-        pinentry-program ${pkgs.pinentry.gtk2}/bin/pinentry
+    home.configFile = {
+      "gnupg/gpg-agent.conf".source = "${configDir}/gnupg/gpg-agent.conf";
+      "gnupg/gpg.conf".source = "${configDir}/gnupg/gpg.conf";
+    };
+
+    init.yubikey = mkIf cfg.yubikey.enable {
+      programs.ssh.startAgent = false;
+      programs.gnupg.agent = {
+        enable = true;
+        enableSSHSupport = true;
+      };
+
+      services.pcscd.enable = true;
+      services.udev.packages = [ pkgs.yubikey-personalization ];
+
+      environment.systemPackages = with pkgs; [
+        yubikey-personalization
+      ];
+
+      environment.shellInit = ''
+        export GPG_TTY="$(tty)"
+        gpg-connect-agent /bye
+        #export SSH_AUTH_SOCK="/run/user/$UID/gnupg/S.gpg-agent.ssh"
+        export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
       '';
     };
   };
