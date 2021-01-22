@@ -32,6 +32,8 @@ in {
       services.udev.packages = [ pkgs.yubikey-personalization ];
 
       environment.systemPackages = with pkgs; [
+	pinentry-curses
+	pinentry-qt
         yubikey-personalization
       ];
 
